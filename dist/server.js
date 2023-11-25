@@ -18,13 +18,8 @@ const dotenvConfig_1 = __importDefault(require("./App/dotenvConfig"));
 // let server: Server;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        mongoose_1.default.connect(dotenvConfig_1.default.DB_URL)
-            .then(() => {
-            App_1.default.listen(dotenvConfig_1.default.PORT, () => console.log(`Server Connected Successfully, and Running at the port :${dotenvConfig_1.default.PORT}!`));
-        })
-            .catch((err) => {
-            console.log("Server Connection Fail");
-        });
+        mongoose_1.default.connect(dotenvConfig_1.default.DB_URL);
+        App_1.default.listen(dotenvConfig_1.default.PORT, () => console.log(`Server Connected Successfully, and Running at the port :${dotenvConfig_1.default.PORT}!`));
     });
 }
 main();
