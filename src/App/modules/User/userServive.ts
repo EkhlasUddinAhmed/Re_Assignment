@@ -79,20 +79,18 @@ const GetUserOrders = async (userId: number) => {
   }
 
   const newOrder = await UserModel.aggregate([
-       {
-        $match:{userId}
-       },
-       {
-        $project:{
-          orders:1,
-          _id:0
-        }
-       }
-  ])
+    {
+      $match: { userId },
+    },
+    {
+      $project: {
+        orders: 1,
+        _id: 0,
+      },
+    },
+  ]);
   return newOrder;
 };
-
-
 
 const TotalPrice = async (userId: number) => {
   if (!(await UserModel.isUserExists(userId))) {
@@ -100,37 +98,32 @@ const TotalPrice = async (userId: number) => {
   }
 
   const total = await UserModel.aggregate([
-       {
-        $match:{userId}
-       },
-       {
-        $unwind:"$orders"
-       },
-        {
-          $group:{
-            _id:null,
-            TotalPrice:{
-              $sum:{
-                $multiply: [ "$orders.Price" ,"$orders.Quantity" ]
-              }
-             } 
-          
-          }
+    {
+      $match: { userId },
+    },
+    {
+      $unwind: '$orders',
+    },
+    {
+      $group: {
+        _id: null,
+        TPrice: {
+          $sum: {
+            $multiply: ['$orders.price', '$orders.quantity'],
+          },
         },
-       
-       {
-         $project:{
-          TotalPrice:1,
-          _id:0
-       }}
-      ])
+      },
+    },
+
+    {
+      $project: {
+        TotalPrice: { $round: ['$TPrice', 2] },
+        _id: 0,
+      },
+    },
+  ]);
   return total;
 };
-
-
-
-
-
 
 export const UseService = {
   createOneUserInDB,
@@ -140,5 +133,5 @@ export const UseService = {
   UpdateOneUserFromDB,
   UserOrder,
   GetUserOrders,
-  TotalPrice
+  TotalPrice,
 };

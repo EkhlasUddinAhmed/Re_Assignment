@@ -5,9 +5,9 @@ import bcrypt from 'bcrypt';
 import dotenvConfig from '../../dotenvConfig';
 
 const OrderSchema = new Schema<TOrder>({
-  ProductName: String,
-  Price: Number,
-  Quantity:Number,
+  productName: String,
+  price: Number,
+  quantity:Number,
 
 });
 

@@ -37,6 +37,6 @@ export default UserRouter;
 //   }
 
 
-// ProductName: Bag,
-// Price: 150,
-// Quantity:3,
+// "productName": "Bag",
+// "price": 150,
+// "quantity":3,
