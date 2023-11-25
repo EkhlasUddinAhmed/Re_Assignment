@@ -1,8 +1,15 @@
 import { Schema, model } from 'mongoose';
-import { TUser, UserStaticModel } from './userInterface';
+import { TOrder, TUser, UserStaticModel } from './userInterface';
 import bcrypt from 'bcrypt';
 
 import dotenvConfig from '../../dotenvConfig';
+
+const OrderSchema = new Schema<TOrder>({
+  ProductName: String,
+  Price: Number,
+  Quantity:Number,
+
+});
 
 const UserSchema = new Schema<TUser, UserStaticModel>({
   userId: {
@@ -52,6 +59,7 @@ const UserSchema = new Schema<TUser, UserStaticModel>({
     type: Boolean,
     default: false,
   },
+  orders: [OrderSchema],
 });
 
 UserSchema.statics.isUserExists = async function (userId: number) {
@@ -82,6 +90,10 @@ UserSchema.pre('findOne', function (next) {
   });
   next();
 });
+UserSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 UserSchema.post('find', function (doc, next) {
   next();
@@ -89,3 +101,5 @@ UserSchema.post('find', function (doc, next) {
 
 const UserModel = model<TUser, UserStaticModel>('User', UserSchema);
 export default UserModel;
+
+

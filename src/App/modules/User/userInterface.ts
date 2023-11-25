@@ -1,5 +1,13 @@
 import { Model } from "mongoose";
 
+
+export type TOrder ={
+  ProductName: string,
+  Price: number,
+  Quantity:number,
+  
+}
+
 export type TUser = {
   userId: number;
   username: string;
@@ -18,6 +26,7 @@ export type TUser = {
     country: string;
   };
    isDeleted:boolean;
+   orders: TOrder[];
 };
 
 export interface UserStaticModel extends Model<TUser> {
