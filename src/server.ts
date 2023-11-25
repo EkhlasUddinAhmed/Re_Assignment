@@ -10,7 +10,7 @@ async function main() {
     console.log(
       `Server Connected Successfully, and Running at the port :${dotenvConfig.PORT}!`
     )
-  );
+  )
 }
 
 main();
