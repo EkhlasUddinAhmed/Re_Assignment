@@ -1,26 +1,5 @@
 import * as z from 'zod';
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-const OrderSchema = z.object({
-  productName: z.string().regex(/^[a-zA-Z\s]+$/, {
-    message: 'Invalid Product Name. Give Only Alphabet Characters and Spaces',
-  }),
-  price: z.number().positive({ message: 'Price Should be a Positive Value' }),
-  quantity: z.number()
-    .int({ message: 'Quantity must be an integer.' })
-    .min(1, { message: 'Quantity must be at least 1.' })
-    .positive({ message: 'Quantity Should be a Positive Value' }),
-
-  // ... other fields related to an order
-});
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
 const FullNameSchema = z.object({
   firstName: z.string().regex(/^[a-zA-Z]+$/, {
     message: 'Invalid First Name. Give Only Alphabet Character',
@@ -45,33 +24,30 @@ export const ProductSchema = z.object({
     message: 'Invalid Product Name. Give Only Alphabet Character',
   }),
   price: z.number().positive({ message: 'Price Should be Positive Value' }),
-  quantity: z.number()
+  quantity: z
+    .number()
     .int({
       message: 'Quantity must be an integer.',
     })
     .positive({ message: 'Quantity Should be Positive Value' })
     .min(1, { message: 'Quantity should be Minimum 1' }),
-
-  // ... other fields related to a product
 });
 
-// const OrderSchema = z.object({
-//   productName: z.string().regex(/^[a-zA-Z]+$/, {
-//     message: 'Invalid Product Name. Give Only Alphabet Character',
-//   }),
-//   price: z.number().positive({ message: 'Price Should be Positive Value' }),
-//   quantity: z
-//     .number()
-//     .int({
-//       message: 'Quantity must be an integer.',
-//     })
-//     .min(1, {
-//       message: 'Quantity must be at least 1.',
-//     })
-//     .positive({ message: 'Quantity Should be Positive Value' }),
-
-//   // ... other fields related to an order
-// });
+const OrderSchema = z.object({
+  productName: z.string().regex(/^[a-zA-Z]+$/, {
+    message: 'Invalid Product Name. Give Only Alphabet Character',
+  }),
+  price: z.number().positive({ message: 'Price Should be Positive Value' }),
+  quantity: z
+    .number()
+    .int({
+      message: 'Quantity must be an integer.',
+    })
+    .min(1, {
+      message: 'Quantity must be at least 1.',
+    })
+    .positive({ message: 'Quantity Should be Positive Value' }),
+});
 
 const UserSchemaForZod = z.object({
   userId: z
@@ -104,21 +80,6 @@ const UserSchemaForZod = z.object({
   isDeleted: z.boolean().default(false),
   orders: z.array(OrderSchema).default([]),
 });
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
-
-
-
-
-
-
 
 
 export default UserSchemaForZod;

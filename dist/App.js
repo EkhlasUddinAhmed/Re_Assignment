@@ -11,7 +11,7 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use('/api/users', userRouter_1.default);
 app.get('/', (req, res) => {
-    res.status(200).send('Heloo Belal');
+    res.status(200).send('WELCOME ASSIGNMENT 2');
 });
 app.all('*', (req, res, next) => {
     res.status(400).json({

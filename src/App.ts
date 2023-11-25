@@ -9,7 +9,7 @@ app.use(cors());
 app.use('/api/users', UserRouter);
 
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).send('Heloo Belal');
+  res.status(200).send('WELCOME ASSIGNMENT 2');
 });
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
