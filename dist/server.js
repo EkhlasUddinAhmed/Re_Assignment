@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const App_1 = __importDefault(require("./App"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenvConfig_1 = __importDefault(require("./App/dotenvConfig"));
-// let server: Server;
+//  let server: Server;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         mongoose_1.default.connect(dotenvConfig_1.default.DB_URL);
