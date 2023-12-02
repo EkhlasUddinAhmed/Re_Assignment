@@ -5,9 +5,18 @@ import bcrypt from 'bcrypt';
 import dotenvConfig from '../../dotenvConfig';
 
 const OrderSchema = new Schema<TOrder>({
-  productName: String,
-  price: Number,
-  quantity:Number,
+  productName: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  quantity:{
+    type: Number,
+    required: true,
+  },
 
 });
 
