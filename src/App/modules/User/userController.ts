@@ -195,9 +195,9 @@ const CalculateTotalPrice = async (req: Request, res: Response) => {
     const uid = parseInt(userId);
     const result = await UseService.TotalPrice(uid);
 
-    // if(result.length===0){
-    //   throw new Error("This User has not given any Order Yet!!");
-    // }
+    if(result.length===0){
+      throw new Error("This User has not given any Order Yet!!");
+    }
     console.log(result);
 
     res.status(200).json({
