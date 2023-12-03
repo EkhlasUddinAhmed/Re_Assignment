@@ -76,6 +76,13 @@ UserSchema.statics.isUserExists = async function (userId: number) {
   return existingUser;
 };
 
+UserSchema.statics.isUserExists2 = async function (username: string) {
+  const existingUser = await UserModel.findOne({ username });
+  return existingUser;
+};
+
+
+
 UserSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;

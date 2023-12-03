@@ -1,12 +1,10 @@
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
-
-export type TOrder ={
-  productName: string,
-  price: number,
-  quantity:number,
-  
-}
+export type TOrder = {
+  productName: string;
+  price: number;
+  quantity: number;
+};
 
 export type TUser = {
   userId: number;
@@ -18,17 +16,18 @@ export type TUser = {
   };
   age: number;
   email: string;
-  isActive: boolean,
+  isActive: boolean;
   hobbies: string[];
   address: {
     street: string;
     city: string;
     country: string;
   };
-   isDeleted:boolean;
-   orders: TOrder[];
+  isDeleted: boolean;
+  orders: TOrder[];
 };
 
 export interface UserStaticModel extends Model<TUser> {
-  isUserExists(userId:number):Promise<TUser|null>;
+  isUserExists(userId: number): Promise<TUser | null>;
+  isUserExists2(username: string): Promise<TUser | null>;
 }

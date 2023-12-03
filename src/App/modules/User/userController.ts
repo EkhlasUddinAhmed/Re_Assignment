@@ -32,7 +32,7 @@ const createUser = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'User Created Successfully',
-      user: newRefinedUser,
+      data: newRefinedUser,
     });
   } catch (error: any) {
     res.status(404).send({
@@ -52,13 +52,13 @@ const getAllUsers = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'Get All Users Successfully',
-      users: result,
+      message: 'Fetching All Users Successfully',
+      data: result,
     });
   } catch (error) {
     res.status(404).json({
       success: false,
-      message: 'Getting All Users Failed ',
+      message: 'Fetching All Users Failed ',
     });
   }
 };
@@ -71,8 +71,8 @@ const getOneUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'One User Got Successfully',
-      user: result,
+      message: 'One User fetch Successfully',
+      data: result,
     });
   } catch (error) {
     res.status(404).json({
@@ -114,12 +114,16 @@ const UpdateUser = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user: TUser = req.body;
     const uid = parseInt(userId);
+
+    
+
+
     const result = await UseService.UpdateOneUserFromDB(uid, user);
 
     res.status(200).json({
       success: true,
-      message: 'Updated User Successfully',
-      user: result,
+      message: ' User Updated  Successfully',
+      data: result,
     });
   } catch (error: any) {
     res.status(404).json({
@@ -140,7 +144,6 @@ const UserGivesOrder = async (req: Request, res: Response) => {
 
     const uid = parseInt(userId);
     const result = await UseService.UserOrder(uid, order);
-
     res.status(200).json({
       success: true,
       message: 'Order Successfull',
@@ -164,6 +167,8 @@ const UserAllOrder = async (req: Request, res: Response) => {
     const uid = parseInt(userId);
     const result = await UseService.GetUserOrders(uid);
 
+    
+
     res.status(200).json({
       success: true,
       message: 'All Orders Get Successfully',
@@ -185,6 +190,11 @@ const CalculateTotalPrice = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const uid = parseInt(userId);
     const result = await UseService.TotalPrice(uid);
+
+    // if(result.length===0){
+    //   throw new Error("This User has not given any Order Yet!!");
+    // }
+    console.log(result);
 
     res.status(200).json({
       success: true,
@@ -211,5 +221,5 @@ export const UserController = {
   UpdateUser,
   UserGivesOrder,
   UserAllOrder,
-  CalculateTotalPrice
+  CalculateTotalPrice,
 };
