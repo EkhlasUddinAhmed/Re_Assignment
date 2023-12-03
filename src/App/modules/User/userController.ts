@@ -144,10 +144,12 @@ const UserGivesOrder = async (req: Request, res: Response) => {
 
     const uid = parseInt(userId);
     const result = await UseService.UserOrder(uid, order);
+
+    
     res.status(200).json({
       success: true,
-      message: 'Order Successfull',
-      productOrdered: req.body,
+      message: 'Order Created Successfully',
+      data: null,
     });
   } catch (error: any) {
     res.status(404).json({
@@ -167,12 +169,14 @@ const UserAllOrder = async (req: Request, res: Response) => {
     const uid = parseInt(userId);
     const result = await UseService.GetUserOrders(uid);
 
-    
+    if(result[0].orders.length===0){
+      throw new Error("This User Has not given any order Yet ....")
+    }
 
     res.status(200).json({
       success: true,
-      message: 'All Orders Get Successfully',
-      productOrdered: result[0].orders,
+      message: 'All Orders fetched Successfully',
+      data: result[0].orders,
     });
   } catch (error: any) {
     res.status(404).json({

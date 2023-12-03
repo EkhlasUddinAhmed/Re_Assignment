@@ -63,7 +63,7 @@ export const ProductSchema = z.object({
     .min(1, { message: 'Quantity should be Minimum 1' }),
 });
 
-const OrderSchema = z.object({
+export const OrderSchema = z.object({
   productName: z
     .string({
       required_error: 'Product Name is required',

@@ -1,6 +1,6 @@
 import { TOrder, TUser } from './userInterface';
 import UserModel from './userModel';
-import UserSchemaForZod from './userValidation';
+import UserSchemaForZod, { OrderSchema } from './userValidation';
 
 const createOneUserInDB = async (user: TUser) => {
   if (await UserModel.isUserExists(user.userId)) {
@@ -90,12 +90,13 @@ const UserOrder = async (userId: number, order: TOrder) => {
   if (!(await UserModel.isUserExists(userId))) {
     throw new Error('User Not Existed..');
   }
+  const ZodvalidatedProduct=await OrderSchema.parse(order)
 
   const newOrder = await UserModel.findOneAndUpdate(
     { userId },
     {
       $push: {
-        orders: order,
+        orders: ZodvalidatedProduct,
       },
     },
   );
