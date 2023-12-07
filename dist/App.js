@@ -3,6 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const cors_1 = __importDefault(require("cors"));
@@ -17,7 +20,22 @@ app.all('*', (req, res, next) => {
     res.status(400).json({
         success: false,
         message: 'Router Not Found',
+        error: {
+            code: 400,
+            description: 'Router Not Found',
+        }
     });
     next();
+});
+app.use((err, req, res, next) => {
+    console.log("From GlobalError is:", err);
+    res.status(404).json({
+        success: false,
+        message: err.message || "Something Wrong",
+        error: {
+            code: 404,
+            error: err
+        }
+    });
 });
 exports.default = app;

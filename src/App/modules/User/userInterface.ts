@@ -28,6 +28,6 @@ export type TUser = {
 };
 
 export interface UserStaticModel extends Model<TUser> {
-  isUserExists(userId: number): Promise<TUser | null>;
+  isUserExists1(userId: number): Promise<TUser | null>;
   isUserExists2(username: string): Promise<TUser | null>;
 }

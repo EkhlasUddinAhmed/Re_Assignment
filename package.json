@@ -2,7 +2,6 @@
   "name": "mongoose_assignment2",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "start-dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -14,7 +13,6 @@
     "start": "node ./dist/server.js",
     "dev": "nodemon ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-    
   },
   "keywords": [],
   "author": "",

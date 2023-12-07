@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 
 import { UseService } from './userServive';
@@ -9,7 +10,6 @@ const createUser = async (req: Request, res: Response) => {
     const user: TUser = req.body;
     const zodValidatedUser = await UserSchemaForZod.parse(user);
     const result = await UseService.createOneUserInDB(zodValidatedUser);
-    // const { password, isDeleted, ...newObject } = result;
 
     const newRefinedUser = {
       userId: result.userId,
@@ -37,10 +37,11 @@ const createUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).send({
       success: false,
-      message: 'User not Created',
+      message:
+        'User not Created due to same userId or same user name or other error',
       error: {
         code: 404,
-        description: error.message || 'Creating User Failed',
+        description: error || 'Creating User Failed',
       },
     });
   }
@@ -52,13 +53,17 @@ const getAllUsers = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'Fetching All Users Successfully',
+      message: 'Users fetched successfully!',
       data: result,
     });
   } catch (error) {
     res.status(404).json({
       success: false,
       message: 'Fetching All Users Failed ',
+      error: {
+        code: 404,
+        description: error || 'Something Wrong',
+      },
     });
   }
 };
@@ -71,7 +76,7 @@ const getOneUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'One User fetch Successfully',
+      message: 'User fetched successfully!',
       data: result,
     });
   } catch (error) {
@@ -80,7 +85,7 @@ const getOneUser = async (req: Request, res: Response) => {
       message: 'User Not Found ',
       error: {
         code: 404,
-        description: 'User not found!',
+        description: error || 'User not found!',
       },
     });
   }
@@ -94,8 +99,8 @@ const deleteUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'Deleted Student Successfully',
-      user: result,
+      message: 'User deleted successfully!',
+      data: null,
     });
   } catch (error: any) {
     res.status(404).json({
@@ -103,7 +108,7 @@ const deleteUser = async (req: Request, res: Response) => {
       message: 'User Not Found ',
       error: {
         code: 404,
-        description: error.message || 'Something Wrong!',
+        description: error || 'Something Wrong!',
       },
     });
   }
@@ -115,9 +120,6 @@ const UpdateUser = async (req: Request, res: Response) => {
     const user: TUser = req.body;
     const uid = parseInt(userId);
 
-    
-
-
     const result = await UseService.UpdateOneUserFromDB(uid, user);
 
     res.status(200).json({
@@ -128,10 +130,10 @@ const UpdateUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: 'User Not Found to update ',
+      message: 'User not Found or Other Error Occours..!! Update Failed...!! ',
       error: {
         code: 404,
-        description: error.message || 'Something Wrong!',
+        description: error || 'Something Wrong!',
       },
     });
   }
@@ -145,7 +147,6 @@ const UserGivesOrder = async (req: Request, res: Response) => {
     const uid = parseInt(userId);
     const result = await UseService.UserOrder(uid, order);
 
-    
     res.status(200).json({
       success: true,
       message: 'Order Created Successfully',
@@ -154,10 +155,10 @@ const UserGivesOrder = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: 'Order Failed...!! ',
+      message: 'User Not Found or Something Wrong!!  Order Failed ...!! ',
       error: {
         code: 404,
-        description: error.message || 'Something Wrong!',
+        description: error || 'Something Wrong!',
       },
     });
   }
@@ -169,22 +170,24 @@ const UserAllOrder = async (req: Request, res: Response) => {
     const uid = parseInt(userId);
     const result = await UseService.GetUserOrders(uid);
 
-    if(result[0].orders.length===0){
-      throw new Error("This User Has not given any order Yet ....")
+    if (result.length === 0) {
+      throw new Error('This User Has not given any order Yet ....');
     }
 
     res.status(200).json({
       success: true,
-      message: 'All Orders fetched Successfully',
-      data: result[0].orders,
+      message: 'Order fetched successfully!',
+      data: {
+        orders: result,
+      },
     });
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: 'Order Not Found ..Failed...!! ',
+      message: error.message || 'User Not Found or Other Error Occoured!! ',
       error: {
         code: 404,
-        description: error.message || 'Something Wrong!',
+        description: error.message,
       },
     });
   }
@@ -195,10 +198,9 @@ const CalculateTotalPrice = async (req: Request, res: Response) => {
     const uid = parseInt(userId);
     const result = await UseService.TotalPrice(uid);
 
-    if(result.length===0){
-      throw new Error("This User has not given any Order Yet!!");
+    if (result.length === 0) {
+      throw new Error('This User has not given any Order Yet!!');
     }
-    console.log(result);
 
     res.status(200).json({
       success: true,
@@ -208,7 +210,7 @@ const CalculateTotalPrice = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: 'Total Price Calculation failed ..Failed...!! ',
+      message: 'Total Price Calculation failed !! ',
       error: {
         code: 404,
         description: error.message || 'Something Wrong!',

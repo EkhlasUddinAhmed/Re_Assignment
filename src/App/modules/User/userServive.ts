@@ -1,13 +1,17 @@
 import { TOrder, TUser } from './userInterface';
 import UserModel from './userModel';
-import UserSchemaForZod, { OrderSchema } from './userValidation';
+import UserSchemaForZod, { ProductSchema } from './userValidation';
 
 const createOneUserInDB = async (user: TUser) => {
-  if (await UserModel.isUserExists(user.userId)) {
+  const userIdExisted = await UserModel.isUserExists1(user.userId);
+
+  if (userIdExisted) {
     throw new Error(`User Already Existed With this userId:${user.userId}`);
   }
 
-  if (await UserModel.isUserExists2(user.username)) {
+  const usernameExisted = await UserModel.isUserExists2(user.username);
+
+  if (usernameExisted) {
     throw new Error(`User Already Existed With this userName:${user.username}`);
   }
 
@@ -21,27 +25,36 @@ const getAllUserFromDB = async () => {
     password: 0,
     isDeleted: 0,
     _id: 0,
+    'fullName._id': 0,
+    __v: 0,
   });
 
   return allUsers;
 };
 
 const getOneUserFromDB = async (userId: number) => {
-  if (!(await UserModel.isUserExists(userId))) {
-    throw new Error('User Not Existed..');
+  const isUserExisted = await UserModel.isUserExists1(userId);
+
+  if (!isUserExisted) {
+    throw new Error('User Not Found..');
   }
   const getOneUser = await UserModel.findOne({ userId }).select({
     password: 0,
     isDeleted: 0,
     _id: 0,
+    'fullName._id': 0,
+    __v: 0,
+    orders: 0,
   });
 
   return getOneUser;
 };
 
 const deleteOneUserFromDB = async (userId: number) => {
-  if (!(await UserModel.isUserExists(userId))) {
-    throw new Error('User Not Existed..');
+  const isUserExisted = await UserModel.isUserExists1(userId);
+
+  if (!isUserExisted) {
+    throw new Error('User Not Found..');
   }
   const upDatedUser = await UserModel.updateOne(
     { userId },
@@ -50,23 +63,14 @@ const deleteOneUserFromDB = async (userId: number) => {
   return upDatedUser;
 };
 
-const UpdateOneUserFromDB = async (userId: number, user:Partial<TUser>) => {
- 
-  if (!(await UserModel.isUserExists(userId))) {
-    throw new Error('User Not Existed..');
+const UpdateOneUserFromDB = async (userId: number, user: TUser) => {
+  const userIdExisted = await UserModel.isUserExists1(userId);
+
+  if (!userIdExisted) {
+    throw new Error('User Not Found to Update..!!');
   }
 
-  const getOneUser = await UserModel.findOne({ userId }).select({
-    
-    isDeleted: 0,
-    _id: 0,
-  });
-  console.log("Got User.....:",getOneUser)
-   user.password=await getOneUser?.password
-  console.log("Get User:",user)
-  user.password=await getOneUser?.password;
-
-  // user.password=await getOneUser.password;
+  user.password = await userIdExisted.password;
 
   const zodValidatedUserForUpdate = await UserSchemaForZod.parse(user);
   const upDatedUser = await UserModel.findOneAndUpdate(
@@ -75,22 +79,22 @@ const UpdateOneUserFromDB = async (userId: number, user:Partial<TUser>) => {
 
     { new: true, useFindAndModify: false },
   ).select({
-    // userId:0,
-    // username:0,
     password: 0,
     isDeleted: 0,
     _id: 0,
+    'fullName._id': 0,
+    orders: 0,
+    __v: 0,
   });
   return upDatedUser;
-
- 
 };
 
 const UserOrder = async (userId: number, order: TOrder) => {
-  if (!(await UserModel.isUserExists(userId))) {
+  const isUserExisted = await UserModel.isUserExists1(userId);
+  if (!isUserExisted) {
     throw new Error('User Not Existed..');
   }
-  const ZodvalidatedProduct=await OrderSchema.parse(order)
+  const ZodvalidatedProduct = await ProductSchema.parse(order);
 
   const newOrder = await UserModel.findOneAndUpdate(
     { userId },
@@ -104,14 +108,16 @@ const UserOrder = async (userId: number, order: TOrder) => {
 };
 
 const GetUserOrders = async (userId: number) => {
-  if (!(await UserModel.isUserExists(userId))) {
-    throw new Error('User Not Existed..');
+  const isUserExisted = await UserModel.isUserExists1(userId);
+  if (!isUserExisted) {
+    throw new Error('User Not Found..');
   }
 
   const newOrder = await UserModel.aggregate([
     {
       $match: { userId },
     },
+
     {
       $project: {
         orders: 1,
@@ -119,12 +125,20 @@ const GetUserOrders = async (userId: number) => {
       },
     },
   ]);
-  return newOrder;
+
+  const omittingIDFromOrder = newOrder[0].orders.map((order: TOrder) => ({
+    productName: order.productName,
+    price: order.price,
+    quantity: order.quantity,
+  }));
+
+  return omittingIDFromOrder;
 };
 
 const TotalPrice = async (userId: number) => {
-  if (!(await UserModel.isUserExists(userId))) {
-    throw new Error('User Not Existed..');
+  const isUserExists = await UserModel.isUserExists1(userId);
+  if (!isUserExists) {
+    throw new Error('User Not Found..!!');
   }
 
   const total = await UserModel.aggregate([
@@ -165,63 +179,3 @@ export const UseService = {
   GetUserOrders,
   TotalPrice,
 };
-
-// import mongoose, { Document, Model, Schema } from 'mongoose';
-
-// // Define the User schema
-// interface User {
-//   name: string;
-//   password: string;
-//   job: string;
-// }
-
-// const userSchema = new Schema<User>({
-//   name: { type: String, required: true },
-//   password: { type: String, required: true },
-//   job: { type: String, required: true }
-// });
-
-// // Create the User model
-// const UserModel: Model<Document & User> = mongoose.model('User', userSchema);
-
-// // Function to update user excluding password
-// async function updateUser(userId: string, updatedData: Partial<User>): Promise<Document & User | null> {
-//   try {
-//     // Find the user by ID
-//     const user = await UserModel.findById(userId);
-
-//     if (user) {
-//       // Update fields except for the password
-//       user.name = updatedData.name || user.name;
-//       user.job = updatedData.job || user.job;
-
-//       // Save the updated user
-//       const updatedUser = await user.save();
-//       return updatedUser;
-//     }
-//     return null;
-//   } catch (error) {
-//     // Handle error
-//     console.error(error);
-//     return null;
-//   }
-// }
-
-// // Usage example
-// const userId = 'your_user_id'; // Replace with the actual user ID
-// const updatedData = {
-//   name: 'UpdatedName',
-//   job: 'UpdatedJob'
-// };
-
-// updateUser(userId, updatedData)
-//   .then(updatedUser => {
-//     if (updatedUser) {
-//       console.log('Updated User:', updatedUser);
-//     } else {
-//       console.log('User not found.');
-//     }
-//   })
-//   .catch(error => {
-//     console.error('Error updating user:', error);
-//   });

@@ -71,7 +71,7 @@ const UserSchema = new Schema<TUser, UserStaticModel>({
   orders: [OrderSchema],
 });
 
-UserSchema.statics.isUserExists = async function (userId: number) {
+UserSchema.statics.isUserExists1 = async function (userId: number) {
   const existingUser = await UserModel.findOne({ userId });
   return existingUser;
 };
@@ -106,14 +106,8 @@ UserSchema.pre('findOne', function (next) {
   });
   next();
 });
-UserSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next();
-});
 
-UserSchema.post('find', function (doc, next) {
-  next();
-});
+
 
 const UserModel = model<TUser, UserStaticModel>('User', UserSchema);
 export default UserModel;
