@@ -89,11 +89,11 @@ const UserSchemaForZod = z.object({
     .array(
       z
         .string({
+          required_error: 'Hobbies are required',
           invalid_type_error: 'Hobbies must be a string',
         })
         .trim(),
-    )
-    .optional(), // Assuming hobbies are optional strings
+    ), // Assuming hobbies are optional strings
   address: AddressSchema,
   isDeleted: z.boolean().default(false),
   orders: z.array(ProductSchema).default([]),
