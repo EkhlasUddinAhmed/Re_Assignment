@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-const FullNameSchema = z.object({
+const FullNameSchemaValidation = z.object({
   firstName: z
     .string({
       required_error: 'First Name is required',
@@ -15,7 +15,7 @@ const FullNameSchema = z.object({
     .trim(),
 });
 
-const AddressSchema = z.object({
+const AddressSchemaValidation = z.object({
   street: z
     .string({
       required_error: 'Street is required',
@@ -36,7 +36,7 @@ const AddressSchema = z.object({
     .trim(),
 });
 
-export const ProductSchema = z.object({
+export const ProductSchemaValidation = z.object({
   productName: z
     .string({
       required_error: 'Product Name is required',
@@ -53,7 +53,7 @@ export const ProductSchema = z.object({
   }),
 });
 
-const UserSchemaForZod = z.object({
+const UserSchemaValidation = z.object({
   userId: z.number({
     required_error: 'User Id is required and Should be unique',
     invalid_type_error: 'UserId must be a number',
@@ -72,7 +72,7 @@ const UserSchemaForZod = z.object({
       invalid_type_error: 'Password must be a string',
     })
     .trim(),
-  fullName: FullNameSchema,
+  fullName: FullNameSchemaValidation,
   age: z.number({
     required_error: 'Age is required',
     invalid_type_error: 'Age must be a number',
@@ -94,9 +94,9 @@ const UserSchemaForZod = z.object({
         })
         .trim(),
     ), 
-  address: AddressSchema,
+  address: AddressSchemaValidation,
   isDeleted: z.boolean().default(false),
-  orders: z.array(ProductSchema).default([]),
+  orders: z.array(ProductSchemaValidation).default([]),
 });
 
-export default UserSchemaForZod;
+export default UserSchemaValidation;

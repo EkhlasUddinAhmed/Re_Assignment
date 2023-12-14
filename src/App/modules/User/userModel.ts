@@ -1,10 +1,10 @@
 import { Schema, model } from 'mongoose';
-import { TOrder, TUser, UserStaticModel } from './userInterface';
+import { TProduct, TUser, UserStaticModel } from './userInterface';
 import bcrypt from 'bcrypt';
 
 import dotenvConfig from '../../dotenvConfig';
 
-const OrderSchema = new Schema<TOrder>({
+const ProductSchema = new Schema<TProduct>({
   productName: {
     type: String,
     required: true,
@@ -68,7 +68,7 @@ const UserSchema = new Schema<TUser, UserStaticModel>({
     type: Boolean,
     default: false,
   },
-  orders: [OrderSchema],
+  orders: [ProductSchema],
 });
 
 UserSchema.statics.isUserExists1 = async function (userId: number) {

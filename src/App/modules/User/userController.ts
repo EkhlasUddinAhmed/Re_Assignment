@@ -2,13 +2,14 @@
 import { Request, Response } from 'express';
 
 import { UseService } from './userServive';
-import UserSchemaForZod from './userValidation';
-import { TOrder, TUser } from './userInterface';
+
+import {TProduct, TUser } from './userInterface';
+import UserSchemaValidation from './userValidation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const user: TUser = req.body;
-    const zodValidatedUser = await UserSchemaForZod.parse(user);
+    const zodValidatedUser = await UserSchemaValidation.parse(user);
     const result = await UseService.createOneUserInDB(zodValidatedUser);
 
     const newRefinedUser = {
@@ -95,7 +96,7 @@ const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const uid = parseInt(userId);
-    const result = await UseService.deleteOneUserFromDB(uid);
+     await UseService.deleteOneUserFromDB(uid);
 
     res.status(200).json({
       success: true,
@@ -142,10 +143,10 @@ const UpdateUser = async (req: Request, res: Response) => {
 const UserGivesOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const order: TOrder = req.body;
+    const order: TProduct = req.body;
 
     const uid = parseInt(userId);
-    const result = await UseService.UserOrder(uid, order);
+    await UseService.UserOrder(uid, order);
 
     res.status(200).json({
       success: true,
@@ -169,6 +170,7 @@ const UserAllOrder = async (req: Request, res: Response) => {
     const { userId } = req.params;
     const uid = parseInt(userId);
     const result = await UseService.GetUserOrders(uid);
+    
 
     if (result.length === 0) {
       throw new Error('This User Has not given any order Yet ....');

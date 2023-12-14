@@ -1,6 +1,6 @@
-import { TOrder, TUser } from './userInterface';
+import { TProduct, TUser } from './userInterface';
 import UserModel from './userModel';
-import UserSchemaForZod, { ProductSchema } from './userValidation';
+import UserSchemaForZod, {ProductSchemaValidation } from './userValidation';
 
 const createOneUserInDB = async (user: TUser) => {
   const userIdExisted = await UserModel.isUserExists1(user.userId);
@@ -27,6 +27,10 @@ const getAllUserFromDB = async () => {
     _id: 0,
     'fullName._id': 0,
     __v: 0,
+    orders:0,
+    userId:0,
+    isActive:0,
+    hobbies:0
   });
 
   return allUsers;
@@ -65,14 +69,16 @@ const deleteOneUserFromDB = async (userId: number) => {
 
 const UpdateOneUserFromDB = async (userId: number, user: TUser) => {
   const userIdExisted = await UserModel.isUserExists1(userId);
+  
 
   if (!userIdExisted) {
     throw new Error('User Not Found to Update..!!');
   }
 
   user.password = await userIdExisted.password;
-
+  
   const zodValidatedUserForUpdate = await UserSchemaForZod.parse(user);
+  zodValidatedUserForUpdate.orders=await userIdExisted.orders;
   const upDatedUser = await UserModel.findOneAndUpdate(
     { userId },
     { $set: zodValidatedUserForUpdate },
@@ -89,12 +95,12 @@ const UpdateOneUserFromDB = async (userId: number, user: TUser) => {
   return upDatedUser;
 };
 
-const UserOrder = async (userId: number, order: TOrder) => {
+const UserOrder = async (userId: number, order: TProduct) => {
   const isUserExisted = await UserModel.isUserExists1(userId);
   if (!isUserExisted) {
     throw new Error('User Not Existed..');
   }
-  const ZodvalidatedProduct = await ProductSchema.parse(order);
+  const ZodvalidatedProduct = await ProductSchemaValidation.parse(order);
 
   const newOrder = await UserModel.findOneAndUpdate(
     { userId },
@@ -126,12 +132,13 @@ const GetUserOrders = async (userId: number) => {
     },
   ]);
 
-  const omittingIDFromOrder = newOrder[0].orders.map((order: TOrder) => ({
+  const omittingIDFromOrder = newOrder[0].orders.map((order: TProduct) => ({
     productName: order.productName,
     price: order.price,
     quantity: order.quantity,
   }));
 
+  console.log("omittingIDFromOrder",omittingIDFromOrder)
   return omittingIDFromOrder;
 };
 
