@@ -138,7 +138,7 @@ const GetUserOrders = async (userId: number) => {
     quantity: order.quantity,
   }));
 
-  console.log("omittingIDFromOrder",omittingIDFromOrder)
+  
   return omittingIDFromOrder;
 };
 
