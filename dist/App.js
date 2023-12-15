@@ -28,7 +28,6 @@ app.all('*', (req, res, next) => {
     next();
 });
 app.use((err, req, res, next) => {
-    console.log("From GlobalError is:", err);
     res.status(404).json({
         success: false,
         message: err.message || "Something Wrong",
